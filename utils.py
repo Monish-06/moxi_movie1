@@ -303,20 +303,18 @@ def get_time(seconds):
             result += f'{int(period_value)}{period_name}'
     return result
     
+import base64
+
 async def get_shortlink(link):
-    url = f'{SHORT_URL}/api'
-    params = {'api': SHORT_API, 'url': link}
     try:
-        async with aiohttp.ClientSession() as session:
-            async with session.get(url, params=params, raise_for_status=True, ssl=False) as response:
-                data = await response.json()
-                if data["status"] == "success":
-                    return data['shortenedUrl']
-                else:
-                    logger.error(f"Error: {data['message']}")
-                    return link
+        # Encode the original link to Base64
+        encoded_link = base64.urlsafe_b64encode(link.encode()).decode()
+
+        # Construct the safelink URL with the encoded link
+        safelink_url = f"https://moxibeatz.fun/p/1.html?url={encoded_link}"
+        return safelink_url
     except Exception as e:
-        logger.error(e)
+        logger.error(f"Safelink generation error: {e}")
         return link
 
 
